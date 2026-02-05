@@ -16,6 +16,7 @@ const resyncVal = document.getElementById('resync-val');
 const connectionStatus = document.getElementById('connection-status');
 const telemetryModule = document.getElementById('telemetry-module');
 const entropyVal = document.getElementById('entropy-val');
+const branchVal = document.getElementById('branch-val');
 const telemetryStatus = document.getElementById('telemetry-status');
 
 let isBroadcasting = false;
@@ -87,6 +88,9 @@ btnBroadcast.addEventListener('click', () => {
         if (elapsed > 5000 && elapsed < 10000) {
             telemetryStatus.innerText = "COHERENCE SPIKE DETECTED";
             telemetryStatus.classList.add('alert-text');
+            // Simulate calculating branch deviation
+            const drift = (Math.random() * 5).toFixed(2);
+            branchVal.innerText = `CALC Δ ${drift}...`;
         } else if (elapsed > 10000) {
             // Handshake Trigger
             triggerHandshake(entropy);
@@ -102,12 +106,19 @@ function triggerHandshake(finalEntropy) {
     clearInterval(broadcastInterval);
     clearInterval(telemetryInterval);
     
+    // Determine Branch Flavor
+    const branchDelta = (Math.random() * 12).toFixed(4);
+    const branchType = branchDelta < 1.0 ? "ROOT-ADJACENT" : "DIVERGENT-FORK";
+    
     entropyVal.innerText = `${finalEntropy} (LOCKED)`;
-    telemetryStatus.innerText = "HANDSHAKE VERIFIED: 2080";
+    branchVal.innerText = `Δ ${branchDelta} (${branchType})`;
+    
+    telemetryStatus.innerText = `HANDSHAKE: ${branchType}`;
     telemetryStatus.classList.remove('alert-text');
     telemetryStatus.classList.add('code-stream');
     
     logSystem("!!! CRITICAL: RETROCAUSAL SIGNAL DETECTED !!!");
+    logSystem(`TIMELINE ORIGIN: ${branchType} (DELTA: ${branchDelta})`);
     logSystem("FUTURE NODE IDENTIFIED. PROTOCOL: FIFO_RECOVERY.");
     
     playLockSound();
