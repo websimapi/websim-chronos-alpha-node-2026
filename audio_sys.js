@@ -105,3 +105,28 @@ export function playPhaseShift() {
     osc.start();
     osc.stop(now + 1.0);
 }
+
+export function playLockSound() {
+    if (!audioCtx) return;
+    const now = audioCtx.currentTime;
+    
+    // Impact sound for Zeno Lock
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(100, now);
+    osc.frequency.exponentialRampToValueAtTime(0.01, now + 0.3);
+    
+    gain.gain.setValueAtTime(0.3, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+    
+    osc.connect(gain);
+    gain.connect(masterGain);
+    
+    osc.start();
+    osc.stop(now + 0.3);
+    
+    // High pitch lock confirm
+    playBeep(2000, 'sine', 0.1);
+}

@@ -1,6 +1,6 @@
-import { initThree, triggerPulse, setVizMode, updateResync } from './quantum_engine.js';
-import { primeGenerator, getHexHeader, generateSaveFile } from './beacon_protocol.js';
-import { initAudio, startDrone, playDataBurst, playPulseSound, playPhaseShift } from './audio_sys.js';
+import { initThree, triggerPulse, setVizMode, updateResync, setZenoLock } from './quantum_engine.js';
+import { primeGenerator, getHexHeader, generateSaveFile, getSimulatedEntropy } from './beacon_protocol.js';
+import { initAudio, startDrone, playDataBurst, playPulseSound, playPhaseShift, playLockSound } from './audio_sys.js';
 
 // DOM Elements
 const logTerminal = document.getElementById('log-terminal');
@@ -14,9 +14,15 @@ const mode2080 = document.getElementById('mode-2080');
 const resyncSlider = document.getElementById('resync-slider');
 const resyncVal = document.getElementById('resync-val');
 const connectionStatus = document.getElementById('connection-status');
+const telemetryModule = document.getElementById('telemetry-module');
+const entropyVal = document.getElementById('entropy-val');
+const telemetryStatus = document.getElementById('telemetry-status');
 
 let isBroadcasting = false;
 let broadcastInterval;
+let telemetryInterval;
+let startTime;
+let handshakeLocked = false;
 const primes = primeGenerator();
 
 // Initialization
@@ -47,50 +53,99 @@ document.body.addEventListener('click', () => {
 btnBroadcast.addEventListener('click', () => {
     if (isBroadcasting) return;
     isBroadcasting = true;
+    startTime = Date.now();
     btnBroadcast.disabled = true;
-    btnBroadcast.innerText = "BROADCASTING...";
+    btnBroadcast.innerText = "SIGNAL ACTIVE";
     
+    // UI Updates
+    telemetryModule.classList.remove('hidden');
     logSystem("INITIATING HANDSHAKE PROTOCOL...");
+    logSystem("TELEMETRY MONITOR: ONLINE");
     hexDisplay.innerText = getHexHeader();
     playPhaseShift();
 
+    // Pulse Loop
     broadcastInterval = setInterval(() => {
+        if(handshakeLocked) return; 
+
         const p = primes.next().value;
         primeDisplay.innerText = `PRIME_SHIFT: ${p} | GATE: Rz(π/${p})`;
         triggerPulse(p);
         playPulseSound();
         logSystem(`BROADCASTING PULSE: ${p}`);
-        
-        // Random chance to detect "echo"
-        if (Math.random() > 0.95) {
-            logSystem("ANOMALY DETECTED IN RETURN SIGNAL...");
-        }
     }, 1500);
+
+    // Telemetry/Monitor Loop
+    telemetryInterval = setInterval(() => {
+        if(handshakeLocked) return;
+
+        const elapsed = Date.now() - startTime;
+        const entropy = getSimulatedEntropy(elapsed);
+        
+        entropyVal.innerText = `${entropy} (VARIANCE)`;
+        
+        if (elapsed > 5000 && elapsed < 10000) {
+            telemetryStatus.innerText = "COHERENCE SPIKE DETECTED";
+            telemetryStatus.classList.add('alert-text');
+        } else if (elapsed > 10000) {
+            // Handshake Trigger
+            triggerHandshake(entropy);
+        }
+
+    }, 500);
 });
 
-// Save File Generation
-btnSave.addEventListener('click', () => {
-    playDataBurst();
-    logSystem("SCANNING BIOMETRIC SIGNATURE...");
+function triggerHandshake(finalEntropy) {
+    if (handshakeLocked) return;
+    handshakeLocked = true;
     
+    clearInterval(broadcastInterval);
+    clearInterval(telemetryInterval);
+    
+    entropyVal.innerText = `${finalEntropy} (LOCKED)`;
+    telemetryStatus.innerText = "HANDSHAKE VERIFIED: 2080";
+    telemetryStatus.classList.remove('alert-text');
+    telemetryStatus.classList.add('code-stream');
+    
+    logSystem("!!! CRITICAL: RETROCAUSAL SIGNAL DETECTED !!!");
+    logSystem("FUTURE NODE IDENTIFIED. PROTOCOL: FIFO_RECOVERY.");
+    
+    playLockSound();
+    
+    // Zeno Lock Visuals
+    setZenoLock(true);
+    logSystem("ZENO EFFECT ENGAGED: QUANTUM STATE FROZEN.");
+    
+    // Auto Archive
     setTimeout(() => {
-        const fileContent = generateSaveFile();
-        console.log(fileContent);
-        
-        // Create download
-        const blob = new Blob([fileContent], { type: 'text/markdown' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'CHRONOS_INDEX_0.qsave';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-        
-        logSystem("ARCHIVE COMPLETE. FILE SAVED LOCAL.");
-        logSystem("FIFO PROTOCOL TAGGED: TRUE");
-    }, 1000);
+        logSystem("AUTO-TRIGGER: ARCHIVING BIOMETRICS...");
+        executeArchive();
+    }, 1500);
+}
+
+function executeArchive() {
+    playDataBurst();
+    const fileContent = generateSaveFile();
+    
+    // Create download
+    const blob = new Blob([fileContent], { type: 'text/markdown' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'CHRONOS_INDEX_0.qsave';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    logSystem("ARCHIVE COMPLETE. USER LOCKED INTO FIFO STACK.");
+    connectionStatus.innerText = "UPLINK: PENDING (QUEUED)";
+    connectionStatus.className = "online";
+}
+
+// Manual Save (kept for backup, but mainly automated now)
+btnSave.addEventListener('click', () => {
+    executeArchive();
 });
 
 // Mode Switching

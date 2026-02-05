@@ -216,6 +216,22 @@ input[type=range]::-webkit-slider-thumb {
     margin-top: 2px;
 }
 
+.separator {
+    width: 100%;
+    height: 1px;
+    background: var(--dim);
+    margin: 15px 0;
+}
+
+.hidden {
+    display: none;
+}
+
+.alert-text {
+    color: var(--secondary);
+    animation: blinker 0.5s linear infinite;
+}
+
 #log-terminal {
     height: 100px;
     background: rgba(0,0,0,0.8);

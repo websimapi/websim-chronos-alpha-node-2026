@@ -149,7 +149,28 @@ function animateColor(targetColor) {
     particleSystem.geometry.attributes.color.needsUpdate = true;
 }
 
+let isZenoLocked = false;
+
+export function setZenoLock(active) {
+    isZenoLocked = active;
+    if (active) {
+        // Turn gold/white to visualize "Crystalized Time"
+        const color = new THREE.Color(0xffaa00);
+        const colors = particleSystem.geometry.attributes.color.array;
+        for(let i=0; i<colors.length; i+=3) {
+            colors[i] = color.r;
+            colors[i+1] = color.g;
+            colors[i+2] = color.b;
+        }
+        particleSystem.geometry.attributes.color.needsUpdate = true;
+    } else {
+        // Reset to blue if unlocked
+        animateColor(COLOR_2026);
+    }
+}
+
 export function updateResync(value) {
+    if (isZenoLocked) return;
     // 0 = 2080 (Red), 100 = 2026 (Blue)
     // Interpolate colors based on slider
     const ratio = value / 100;
@@ -171,11 +192,18 @@ function animate() {
     const time = clock.getElapsedTime();
 
     if (particleSystem) {
-        particleSystem.rotation.y += 0.001;
-        // Pulse breathing
-        if (currentState !== 'THROW') {
-            const scale = 1 + Math.sin(time) * 0.02;
-            particleSystem.scale.setScalar(scale);
+        if (!isZenoLocked) {
+            particleSystem.rotation.y += 0.001;
+            // Pulse breathing
+            if (currentState !== 'THROW') {
+                const scale = 1 + Math.sin(time) * 0.02;
+                particleSystem.scale.setScalar(scale);
+            }
+        } else {
+            // Zeno Effect: Jitter in place very rapidly to simulate "observation freezing"
+            particleSystem.position.x = (Math.random() - 0.5) * 0.02;
+            particleSystem.position.y = (Math.random() - 0.5) * 0.02;
+            particleSystem.position.z = (Math.random() - 0.5) * 0.02;
         }
     }
 
