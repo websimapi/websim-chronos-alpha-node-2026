@@ -1,0 +1,50 @@
+// Pulse Loop
+let currentPrime = 2;
+broadcastInterval = setInterval(() => {
+    if(handshakeLocked) return; 
+
+    currentPrime = primes.next().value;
+    // primeDisplay.innerText = `PRIME_SHIFT: ${p} | GATE: Rz(π/${p})`; // Removed old display
+    triggerPulse(currentPrime);
+    playPulseSound();
+    
+    // Update visualizer based on prime
+    visSignal.innerText = getVisualizerStr(currentPrime, false);
+    
+    logSystem(`BROADCASTING PULSE: ${currentPrime}`);
+}, 1500);
+
+// Telemetry/Monitor Loop
+telemetryInterval = setInterval(() => {
+    if(handshakeLocked) return;
+
+    const elapsed = Date.now() - startTime;
+    const data = getSimulatedEntropy(elapsed); // returns {noise, coherence}
+    const snr = getSNR(elapsed);
+    
+    // Dashboard Updates
+    snrVal.innerText = `${snr} dB`;
+    coherencePct.innerText = `${data.coherence}%`;
+    coherenceProgress.style.width = `${data.coherence}%`;
+    scanFreq.innerText = `${(2.4 + Math.random()*0.1).toFixed(3)} THz`;
+    
+    // Drift Simulation
+    const drift = (0.02 + Math.random() * 0.01).toFixed(3);
+    driftVal.innerText = `${drift}%/hr`;
+
+    // Alert Levels
+    if (elapsed > 5000 && elapsed < 10000) {
+        // YELLOW ALERT
+        telemetryStatus.innerText = "COHERENCE SPIKE DETECTED";
+        telemetryStatus.classList.add('alert-yellow');
+        statusTelemetry.style.color = "#ffaa00";
+        coherenceProgress.style.background = "#ffaa00";
+    } else if (elapsed > 10000) {
+        // RED ALERT / HANDSHAKE
+        triggerHandshake(data.noise);
+    } else {
+        // BLUE (Standard)
+        telemetryStatus.innerText = `SCANNING NOISE... (ENT: ${data.noise})`;
+    }
+
+}, 250); // Faster update for UI responsiveness

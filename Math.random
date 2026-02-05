@@ -1,0 +1,9 @@
+if (elapsedTime > 5000 && elapsedTime < 10000) {
+    // Level 1: Coherence Extension
+    noise = Math.random() * 0.2 + 0.6;
+} else if (elapsedTime >= 10000) {
+    // Level 2/3: Handshake approach
+    noise = Math.random() * 0.05 + 0.01;
+}
+
+return noise.toFixed(4);

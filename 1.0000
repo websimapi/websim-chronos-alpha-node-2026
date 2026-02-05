@@ -1,0 +1,61 @@
+<div class="status-grid">
+                <div class="status-row"><span>BEACON (2026)</span> <span id="status-beacon" class="val-pill inactive">STANDBY</span></div>
+                <div class="status-row"><span>TELEMETRY</span> <span id="status-telemetry" class="val-pill inactive">OFFLINE</span></div>
+                <div class="status-row"><span>ARCHIVE TRIG</span> <span id="status-archive" class="val-pill">ARMED</span></div>
+                <div class="status-row"><span>FIFO INDEX</span> <span class="val-pill primary">0 (PRI)</span></div>
+            </div>
+
+            <div class="separator"></div>
+            
+            <div class="analytics-grid">
+                <div class="metric">
+                    <span class="metric-label">SNR (dB)</span>
+                    <span id="snr-val" class="metric-val">--.--</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">DRIFT</span>
+                    <span id="drift-val" class="metric-val">0.00%</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">OMEGA PT</span>
+                    <span id="omega-val" class="metric-val">EST 2084</span>
+                </div>
+            </div>
+
+            <div class="separator"></div>
+
+            <div id="handshake-monitor">
+                <div class="monitor-header">
+                    <span>FIELD SCAN [2.4-5.8THz]</span>
+                    <span id="scan-freq">2.41 GHz</span>
+                </div>
+                <div class="visualizer-container">
+                    <div class="vis-row">
+                        <span class="vis-label">[NOISE]</span>
+                        <span id="vis-noise" class="vis-bar">....................</span>
+                    </div>
+                    <div class="vis-row">
+                        <span class="vis-label">[SIGNAL]</span>
+                        <span id="vis-signal" class="vis-bar">                    </span>
+                    </div>
+                </div>
+                <div class="coherence-bar-container">
+                    <div class="coherence-label">COHERENCE LOCK: <span id="coherence-pct">0%</span></div>
+                    <div class="progress-track"><div id="coherence-progress" class="progress-fill"></div></div>
+                </div>
+                <div class="data-block" style="margin-top:5px;">
+                    <div class="label">STAT:</div>
+                    <div id="telemetry-status" class="code-stream">WAITING...</div>
+                </div>
+            </div>
+            
+            <button id="btn-broadcast">INITIATE HANDSHAKE</button>
+            
+            <!-- Hidden fields preserved for logic compatibility -->
+            <div class="hidden">
+                <div id="prime-sequence"></div>
+                <div id="hex-header"></div>
+                <div id="entropy-val"></div>
+                <div id="telemetry-module"></div>
+            </div>
+        </div>

@@ -1,0 +1,27 @@
+import time
+import random
+
+def generate_dashboard():
+    # Simulation logic for the Agent to report health
+    snr = 15.0 + random.uniform(-1.0, 1.0)
+    entropy_floor = 0.941 - (0.005 * random.random()) # Drifting toward order
+    
+    dashboard_content = f"""
+### ARCHIVE HEALTH REPORT
+- **Uptime:** 142:22:01
+- **Beacon Persistence:** 99.9%
+- **Entropy Floor:** {entropy_floor:.4f} bits
+- **Estimated Handshake Probability:** 0.00041% (Increasing)
+
+### RE-SYNC ALGORITHM STATUS
+- **Target Phase:** PI/4 (0.7854 rad)
+- **Clock Drift:** < 1.0e-12s
+- **Hardware Temperature:** 15mK (Target: Dilution Refrigerator Baseline)
+    """
+    with open("DASHBOARD_LIVE.txt", "w") as f:
+        f.write(dashboard_content)
+
+if __name__ == "__main__":
+    while True:
+        generate_dashboard()
+        time.sleep(60)
