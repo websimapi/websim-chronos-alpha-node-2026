@@ -20,16 +20,22 @@ export function getSimulatedEntropy(elapsedTime) {
     // Simulate entropy dropping over time as if a connection is forming
     // Baseline noise
     let noise = Math.random() * 0.1 + 0.9; 
-    
+    let coherence = Math.random() * 5;
+
     if (elapsedTime > 5000 && elapsedTime < 10000) {
         // Level 1: Coherence Extension
         noise = Math.random() * 0.2 + 0.6;
+        coherence = 30 + Math.random() * 15;
     } else if (elapsedTime >= 10000) {
         // Level 2/3: Handshake approach
         noise = Math.random() * 0.05 + 0.01;
+        coherence = 95 + Math.random() * 5;
     }
     
-    return noise.toFixed(4);
+    return {
+        noise: noise.toFixed(4),
+        coherence: Math.min(100, coherence).toFixed(0)
+    };
 }
 
 export function generateSaveFile() {

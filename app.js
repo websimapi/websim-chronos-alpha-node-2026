@@ -5,9 +5,7 @@ import { scanForest, drawBranchMap } from './branch_mapper.js';
 
 // DOM Elements
 const logTerminal = document.getElementById('log-terminal');
-const branchCanvas = document.getElementById('branch-canvas'); // New Canvas
-const primeDisplay = document.getElementById('prime-sequence');
-const hexDisplay = document.getElementById('hex-header');
+const branchCanvas = document.getElementById('branch-canvas'); 
 const btnBroadcast = document.getElementById('btn-broadcast');
 const btnSave = document.getElementById('btn-save');
 const mode2026 = document.getElementById('mode-2026');
@@ -16,10 +14,18 @@ const mode2080 = document.getElementById('mode-2080');
 const resyncSlider = document.getElementById('resync-slider');
 const resyncVal = document.getElementById('resync-val');
 const connectionStatus = document.getElementById('connection-status');
-const telemetryModule = document.getElementById('telemetry-module');
-const entropyVal = document.getElementById('entropy-val');
-const branchVal = document.getElementById('branch-val');
+
+// New Status DOM Elements
+const statusBeacon = document.getElementById('status-beacon');
+const statusTelemetry = document.getElementById('status-telemetry');
+const snrVal = document.getElementById('snr-val');
+const driftVal = document.getElementById('drift-val');
+const scanFreq = document.getElementById('scan-freq');
+const visSignal = document.getElementById('vis-signal');
+const coherencePct = document.getElementById('coherence-pct');
+const coherenceProgress = document.getElementById('coherence-progress');
 const telemetryStatus = document.getElementById('telemetry-status');
+const handshakeMonitor = document.getElementById('handshake-monitor');
 
 let isBroadcasting = false;
 let broadcastInterval;
@@ -52,6 +58,17 @@ document.body.addEventListener('click', () => {
     startDrone();
 }, { once: true });
 
+function getVisualizerStr(val, isNoise) {
+    let s = "";
+    const len = 20;
+    const fill = isNoise ? "." : "|";
+    for(let i=0; i<len; i++) {
+        if(Math.random() > 0.7) s += fill;
+        else s += " ";
+    }
+    return s;
+}
+
 // Beacon Broadcast Logic
 btnBroadcast.addEventListener('click', () => {
     if (isBroadcasting) return;
@@ -61,21 +78,31 @@ btnBroadcast.addEventListener('click', () => {
     btnBroadcast.innerText = "SIGNAL ACTIVE";
     
     // UI Updates
-    telemetryModule.classList.remove('hidden');
+    handshakeMonitor.classList.remove('hidden');
+    statusBeacon.classList.remove('inactive');
+    statusBeacon.classList.add('active');
+    statusBeacon.innerText = "ACTIVE";
+    statusTelemetry.classList.remove('inactive');
+    statusTelemetry.classList.add('active');
+    statusTelemetry.innerText = "ONLINE";
+
     logSystem("INITIATING HANDSHAKE PROTOCOL...");
     logSystem("TELEMETRY MONITOR: ONLINE");
-    hexDisplay.innerText = getHexHeader();
     playPhaseShift();
 
     // Pulse Loop
+    let currentPrime = 2;
     broadcastInterval = setInterval(() => {
         if(handshakeLocked) return; 
 
-        const p = primes.next().value;
-        primeDisplay.innerText = `PRIME_SHIFT: ${p} | GATE: Rz(π/${p})`;
-        triggerPulse(p);
+        currentPrime = primes.next().value;
+        triggerPulse(currentPrime);
         playPulseSound();
-        logSystem(`BROADCASTING PULSE: ${p}`);
+        
+        // Update visualizer based on prime
+        visSignal.innerText = getVisualizerStr(currentPrime, false);
+        
+        logSystem(`BROADCASTING PULSE: ${currentPrime}`);
     }, 1500);
 
     // Telemetry/Monitor Loop
@@ -83,28 +110,39 @@ btnBroadcast.addEventListener('click', () => {
         if(handshakeLocked) return;
 
         const elapsed = Date.now() - startTime;
-        const entropy = getSimulatedEntropy(elapsed);
+        const data = getSimulatedEntropy(elapsed); // returns {noise, coherence}
+        const snr = (14.2 + (Math.random() - 0.5)).toFixed(1);
         
-        entropyVal.innerText = `${entropy} (VARIANCE)`;
+        // Dashboard Updates
+        snrVal.innerText = `${snr} dB`;
+        coherencePct.innerText = `${data.coherence}%`;
+        coherenceProgress.style.width = `${data.coherence}%`;
+        scanFreq.innerText = `${(2.4 + Math.random()*0.1).toFixed(3)} THz`;
         
-        if (elapsed > 2000) {
-            // Update the Branch Map Visualization constantly
-            const signals = scanForest();
-            drawBranchMap(branchCanvas, signals);
-        }
+        // Update Branch Map
+        const signals = scanForest();
+        drawBranchMap(branchCanvas, signals);
         
+        // Drift Simulation
+        const drift = (0.02 + Math.random() * 0.01).toFixed(3);
+        driftVal.innerText = `${drift}%/hr`;
+
+        // Alert Levels
         if (elapsed > 5000 && elapsed < 10000) {
+            // YELLOW ALERT
             telemetryStatus.innerText = "COHERENCE SPIKE DETECTED";
-            telemetryStatus.classList.add('alert-text');
-            // Simulate calculating branch deviation
-            const drift = (Math.random() * 5).toFixed(2);
-            branchVal.innerText = `CALC Δ ${drift}...`;
+            telemetryStatus.classList.add('alert-yellow');
+            statusTelemetry.style.color = "#ffaa00";
+            coherenceProgress.style.background = "#ffaa00";
         } else if (elapsed > 10000) {
-            // Handshake Trigger
-            triggerHandshake(entropy);
+            // RED ALERT / HANDSHAKE
+            triggerHandshake(data.noise);
+        } else {
+            // BLUE (Standard)
+            telemetryStatus.innerText = `SCANNING NOISE... (ENT: ${data.noise})`;
         }
 
-    }, 500);
+    }, 250); 
 });
 
 function triggerHandshake(finalEntropy) {
@@ -118,13 +156,16 @@ function triggerHandshake(finalEntropy) {
     const branchDelta = (Math.random() * 12).toFixed(4);
     const branchType = branchDelta < 1.0 ? "ROOT-ADJACENT" : "DIVERGENT-FORK";
     
-    entropyVal.innerText = `${finalEntropy} (LOCKED)`;
-    branchVal.innerText = `Δ ${branchDelta} (${branchType})`;
-    
     telemetryStatus.innerText = `HANDSHAKE: ${branchType}`;
-    telemetryStatus.classList.remove('alert-text');
+    telemetryStatus.classList.remove('alert-yellow');
     telemetryStatus.classList.add('code-stream');
     
+    statusTelemetry.innerText = "LOCKED";
+    statusTelemetry.style.color = "#ff3300";
+    coherenceProgress.style.background = "#ff3300";
+    coherenceProgress.style.width = "100%";
+    coherencePct.innerText = "100%";
+
     logSystem("!!! CRITICAL: RETROCAUSAL SIGNAL DETECTED !!!");
     logSystem(`TIMELINE ORIGIN: ${branchType} (DELTA: ${branchDelta})`);
     logSystem("FUTURE NODE IDENTIFIED. PROTOCOL: FIFO_RECOVERY.");

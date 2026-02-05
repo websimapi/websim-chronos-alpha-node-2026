@@ -31,38 +31,66 @@
             <!-- Left Panel: Beacon Control -->
             <div class="panel" id="beacon-panel">
                 <h3>BEACON PROTOCOL</h3>
-                <div class="data-block">
-                    <div class="label">SIG:</div>
-                    <div id="prime-sequence" class="code-stream">WAITING_FOR_PULSE</div>
+                
+                <div class="status-grid">
+                    <div class="status-row"><span>BEACON (2026)</span> <span id="status-beacon" class="val-pill inactive">STANDBY</span></div>
+                    <div class="status-row"><span>TELEMETRY</span> <span id="status-telemetry" class="val-pill inactive">OFFLINE</span></div>
+                    <div class="status-row"><span>ARCHIVE TRIG</span> <span id="status-archive" class="val-pill">ARMED</span></div>
+                    <div class="status-row"><span>FIFO INDEX</span> <span class="val-pill primary">0 (PRI)</span></div>
                 </div>
-                <div class="data-block">
-                    <div class="label">HEX:</div>
-                    <div id="hex-header" class="code-stream">-- -- --</div>
+
+                <div class="separator"></div>
+                
+                <div class="analytics-grid">
+                    <div class="metric">
+                        <span class="metric-label">SNR (dB)</span>
+                        <span id="snr-val" class="metric-val">--.--</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">DRIFT</span>
+                        <span id="drift-val" class="metric-val">0.00%</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">OMEGA PT</span>
+                        <span id="omega-val" class="metric-val">EST 2084</span>
+                    </div>
                 </div>
-                <div id="telemetry-module" class="hidden">
-                    <div class="separator"></div>
-                    <h3>TELEMETRY MONITOR</h3>
-                    <div class="data-block">
-                        <div class="label">ENT:</div>
-                        <div id="entropy-val" class="code-stream">1.0000 (NOISE)</div>
+
+                <div class="separator"></div>
+
+                <div id="handshake-monitor" class="hidden">
+                    <div class="monitor-header">
+                        <span>FIELD SCAN [2.4-5.8THz]</span>
+                        <span id="scan-freq">2.41 GHz</span>
+                    </div>
+                    <div class="visualizer-container">
+                        <div class="vis-row">
+                            <span class="vis-label">[NOISE]</span>
+                            <span id="vis-noise" class="vis-bar">....................</span>
+                        </div>
+                        <div class="vis-row">
+                            <span class="vis-label">[SIGNAL]</span>
+                            <span id="vis-signal" class="vis-bar">                    </span>
+                        </div>
+                    </div>
+                    <div class="coherence-bar-container">
+                        <div class="coherence-label">COHERENCE LOCK: <span id="coherence-pct">0%</span></div>
+                        <div class="progress-track"><div id="coherence-progress" class="progress-fill"></div></div>
                     </div>
                     
                     <!-- Multiverse Branch Map Visualization -->
-                    <div id="branch-map-container">
+                    <div id="branch-map-container" style="margin-top: 10px;">
                         <div class="map-label">MULTIVERSE BRANCH MAP [RADIAL]</div>
                         <canvas id="branch-canvas" width="270" height="150"></canvas>
                     </div>
 
-                    <div class="data-block">
-                        <div class="label">FORK:</div>
-                        <div id="branch-val" class="code-stream">-- (ROOT)</div>
-                    </div>
-                     <div class="data-block">
+                    <div class="data-block" style="margin-top:5px;">
                         <div class="label">STAT:</div>
-                        <div id="telemetry-status" class="code-stream">LISTENING...</div>
+                        <div id="telemetry-status" class="code-stream">WAITING...</div>
                     </div>
                 </div>
-                <button id="btn-broadcast">INITIATE HANDSHAKE (BROADCAST)</button>
+                
+                <button id="btn-broadcast">INITIATE HANDSHAKE</button>
             </div>
 
             <!-- Right Panel: Sandbox Control -->

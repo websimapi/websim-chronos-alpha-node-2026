@@ -131,6 +131,101 @@ h3 {
     overflow: hidden;
 }
 
+/* Dashboard Grid System */
+.status-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 10px;
+}
+
+.status-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.7rem;
+    color: #aaa;
+    border-bottom: 1px dotted #222;
+    padding-bottom: 2px;
+}
+
+.val-pill {
+    background: #111;
+    padding: 0 4px;
+    border-radius: 2px;
+    color: #666;
+    font-weight: bold;
+}
+
+.val-pill.active { color: var(--secondary); text-shadow: 0 0 5px var(--secondary); }
+.val-pill.primary { color: var(--primary); }
+
+.analytics-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 5px;
+    margin: 10px 0;
+}
+
+.metric {
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--dim);
+    padding: 5px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+}
+
+.metric-label { font-size: 0.6rem; color: #666; }
+.metric-val { font-size: 0.8rem; color: var(--primary); }
+
+.monitor-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.6rem;
+    color: #888;
+    margin-bottom: 2px;
+    border-bottom: 1px solid var(--dim);
+}
+
+.visualizer-container {
+    background: #000;
+    padding: 5px;
+    border: 1px solid var(--dim);
+    margin-bottom: 5px;
+    font-family: monospace;
+}
+
+.vis-row {
+    display: flex;
+    font-size: 0.7rem;
+    line-height: 1.1;
+}
+
+.vis-label { width: 50px; color: #444; }
+.vis-bar { color: var(--primary); letter-spacing: 2px; }
+
+.coherence-bar-container {
+    margin-top: 5px;
+}
+
+.coherence-label { font-size: 0.65rem; color: #aaa; margin-bottom: 2px; display: flex; justify-content: space-between; }
+
+.progress-track {
+    width: 100%;
+    height: 4px;
+    background: #111;
+    border: 1px solid #333;
+}
+
+.progress-fill {
+    width: 0%;
+    height: 100%;
+    background: var(--primary);
+    transition: width 0.2s;
+}
+
+.alert-yellow { color: #ffaa00; animation: blinker 0.2s infinite; }
+
 button {
     width: 100%;
     background: transparent;
