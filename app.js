@@ -1,9 +1,11 @@
 import { initThree, triggerPulse, setVizMode, updateResync, setZenoLock } from './quantum_engine.js';
 import { primeGenerator, getHexHeader, generateSaveFile, getSimulatedEntropy } from './beacon_protocol.js';
 import { initAudio, startDrone, playDataBurst, playPulseSound, playPhaseShift, playLockSound } from './audio_sys.js';
+import { scanForest, drawBranchMap } from './branch_mapper.js';
 
 // DOM Elements
 const logTerminal = document.getElementById('log-terminal');
+const branchCanvas = document.getElementById('branch-canvas'); // New Canvas
 const primeDisplay = document.getElementById('prime-sequence');
 const hexDisplay = document.getElementById('hex-header');
 const btnBroadcast = document.getElementById('btn-broadcast');
@@ -84,6 +86,12 @@ btnBroadcast.addEventListener('click', () => {
         const entropy = getSimulatedEntropy(elapsed);
         
         entropyVal.innerText = `${entropy} (VARIANCE)`;
+        
+        if (elapsed > 2000) {
+            // Update the Branch Map Visualization constantly
+            const signals = scanForest();
+            drawBranchMap(branchCanvas, signals);
+        }
         
         if (elapsed > 5000 && elapsed < 10000) {
             telemetryStatus.innerText = "COHERENCE SPIKE DETECTED";

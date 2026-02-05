@@ -223,6 +223,28 @@ input[type=range]::-webkit-slider-thumb {
     margin: 15px 0;
 }
 
+#branch-map-container {
+    margin: 10px 0;
+    border: 1px solid var(--dim);
+    background: rgba(0,0,0,0.5);
+    padding: 5px;
+    text-align: center;
+}
+
+.map-label {
+    font-size: 0.6rem;
+    color: #666;
+    margin-bottom: 5px;
+    text-align: left;
+    border-bottom: 1px dashed var(--dim);
+}
+
+#branch-canvas {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
 .hidden {
     display: none;
 }
