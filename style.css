@@ -1,0 +1,257 @@
+:root {
+    --bg-color: #050505;
+    --primary: #00ffcc; /* 2026 Cyan */
+    --secondary: #ff3300; /* 2080 Red */
+    --dim: #004433;
+    --text: #e0faff;
+    --font-mono: 'Courier New', Courier, monospace;
+}
+
+* {
+    box-sizing: border-box;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-color);
+    color: var(--text);
+    font-family: var(--font-mono);
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+}
+
+#ui-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; /* Let clicks pass to 3D by default, re-enable on panels */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 10px;
+    z-index: 10;
+}
+
+#canvas-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--dim);
+    padding-bottom: 10px;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
+    pointer-events: auto;
+}
+
+.logo {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--primary);
+    text-shadow: 0 0 10px var(--dim);
+}
+
+.blink {
+    animation: blinker 2s linear infinite;
+}
+
+@keyframes blinker {
+    50% { opacity: 0; }
+}
+
+.status {
+    font-size: 0.8rem;
+    text-align: right;
+}
+
+.status span {
+    display: block;
+}
+
+.offline { color: #888; }
+.online { color: var(--secondary); text-shadow: 0 0 5px red; }
+
+#main-hud {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 10px;
+    flex-grow: 1;
+    padding-bottom: 10px;
+    pointer-events: none;
+}
+
+.panel {
+    background: rgba(0, 10, 10, 0.7);
+    border: 1px solid var(--dim);
+    padding: 15px;
+    width: 300px;
+    backdrop-filter: blur(4px);
+    pointer-events: auto;
+    border-radius: 4px;
+}
+
+h3 {
+    margin: 0 0 10px 0;
+    font-size: 0.9rem;
+    border-bottom: 1px solid var(--dim);
+    padding-bottom: 5px;
+    color: var(--primary);
+    text-transform: uppercase;
+}
+
+.data-block {
+    display: flex;
+    margin-bottom: 5px;
+    font-size: 0.8rem;
+}
+
+.label {
+    width: 50px;
+    color: #888;
+}
+
+.code-stream {
+    color: var(--primary);
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+button {
+    width: 100%;
+    background: transparent;
+    border: 1px solid var(--primary);
+    color: var(--primary);
+    padding: 8px;
+    font-family: var(--font-mono);
+    cursor: pointer;
+    margin-top: 10px;
+    font-size: 0.8rem;
+    transition: all 0.2s;
+    text-transform: uppercase;
+}
+
+button:hover:not(:disabled) {
+    background: var(--primary);
+    color: #000;
+    box-shadow: 0 0 15px var(--dim);
+}
+
+button:disabled {
+    border-color: #444;
+    color: #444;
+    cursor: not-allowed;
+}
+
+button.secondary {
+    border-color: #aaa;
+    color: #aaa;
+}
+
+.control-group {
+    margin-bottom: 15px;
+}
+
+.control-group label {
+    display: block;
+    font-size: 0.7rem;
+    color: #888;
+    margin-bottom: 5px;
+}
+
+.toggle-group {
+    display: flex;
+    gap: 5px;
+}
+
+.toggle-group button {
+    margin-top: 0;
+    font-size: 0.7rem;
+    padding: 5px;
+}
+
+.toggle-group button.active {
+    background: var(--primary);
+    color: #000;
+}
+
+input[type=range] {
+    width: 100%;
+    background: transparent;
+    -webkit-appearance: none;
+}
+
+input[type=range]::-webkit-slider-runnable-track {
+    height: 2px;
+    background: var(--dim);
+}
+
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 15px;
+    width: 15px;
+    background: var(--primary);
+    border: 1px solid #000;
+    margin-top: -6px;
+    cursor: pointer;
+}
+
+.slider-val {
+    font-size: 0.7rem;
+    text-align: right;
+    margin-top: 2px;
+}
+
+#log-terminal {
+    height: 100px;
+    background: rgba(0,0,0,0.8);
+    border-top: 1px solid var(--dim);
+    padding: 5px 10px;
+    font-size: 0.75rem;
+    overflow-y: auto;
+    pointer-events: auto;
+    display: flex;
+    flex-direction: column-reverse; /* New logs at bottom, but sticks to bottom */
+}
+
+.log-line {
+    margin-bottom: 2px;
+    opacity: 0.8;
+}
+
+/* Mobile Adjustments */
+@media (max-width: 768px) {
+    #main-hud {
+        flex-direction: column;
+        justify-content: flex-end;
+        align-items: stretch;
+        gap: 0;
+    }
+    
+    .panel {
+        width: 100%;
+        margin-bottom: 5px;
+        padding: 10px;
+    }
+    
+    #log-terminal {
+        height: 60px;
+    }
+
+    h3 { font-size: 0.8rem; margin-bottom: 5px; }
+    button { padding: 6px; }
+}

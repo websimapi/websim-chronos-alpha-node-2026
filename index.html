@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CHRONOS-ALPHA // NODE 2026</title>
+    <link rel="stylesheet" href="style.css">
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://esm.sh/three@0.160.0",
+                "three/addons/": "https://esm.sh/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+</head>
+<body>
+
+    <div id="ui-layer">
+        <header>
+            <div class="logo">PROJECT CHRONOS <span class="blink">_ALPHA</span></div>
+            <div class="status">
+                <span id="node-status">NODE: 2026 [LOCAL]</span>
+                <span id="connection-status" class="offline">UPLINK: SEARCHING...</span>
+            </div>
+        </header>
+
+        <div id="canvas-container"></div>
+
+        <div id="main-hud">
+            <!-- Left Panel: Beacon Control -->
+            <div class="panel" id="beacon-panel">
+                <h3>BEACON PROTOCOL</h3>
+                <div class="data-block">
+                    <div class="label">SIG:</div>
+                    <div id="prime-sequence" class="code-stream">WAITING_FOR_PULSE</div>
+                </div>
+                <div class="data-block">
+                    <div class="label">HEX:</div>
+                    <div id="hex-header" class="code-stream">-- -- --</div>
+                </div>
+                <button id="btn-broadcast">INITIATE HANDSHAKE (BROADCAST)</button>
+            </div>
+
+            <!-- Right Panel: Sandbox Control -->
+            <div class="panel" id="sandbox-panel">
+                <h3>QUANTUM SANDBOX</h3>
+                
+                <div class="control-group">
+                    <label>PHASE STATE</label>
+                    <div class="toggle-group">
+                        <button id="mode-2026" class="active">2026 (ANCHOR)</button>
+                        <button id="mode-throw">THROW (TUNNEL)</button>
+                        <button id="mode-2080" disabled>2080 (TARGET)</button>
+                    </div>
+                </div>
+
+                <div class="control-group" id="resync-group">
+                    <label>RE-SYNC ALGORITHM (SOFT LANDING)</label>
+                    <input type="range" id="resync-slider" min="0" max="100" value="0" disabled>
+                    <div class="slider-val"><span id="resync-val">0</span>% DECOHERENCE BUFFER</div>
+                </div>
+                
+                <div class="control-group">
+                     <button id="btn-save" class="secondary">GENERATE .QSAVE (INDEX 0)</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="log-terminal">
+            <div class="log-line">> SYSTEM BOOT... CHRONOS-ALPHA V0.1 LOADED.</div>
+            <div class="log-line">> WAITING FOR USER INPUT.</div>
+        </div>
+    </div>
+
+    <script type="module" src="app.js"></script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516" integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg==" data-cf-beacon='{"version":"2024.11.0","token":"4c6229722a6346bc8eb5cb0e5eae5d41","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>
